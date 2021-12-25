@@ -24,14 +24,14 @@ public class GateController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         gateActive = true;
-        rend.material.SetFloat("Displacement", 6.0f);
+       
         StartCoroutine(WaitForIt());
     }
 
     private void OnTriggerExit(Collider other)
     {
         gateActive = false;
-        rend.material.SetFloat("Displacement", 0.9f);
+       
     }
 
     IEnumerator WaitForIt()
