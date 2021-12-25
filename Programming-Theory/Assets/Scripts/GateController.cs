@@ -5,11 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class GateController : MonoBehaviour
 {
-    public bool turnTheWheel = false;
+    public bool gateActive = false;
+    private Renderer rend;
     // Start is called before the first frame update
     void Start()
     {
-        
+        rend = gameObject.GetComponent<Renderer>();
     }
 
     // Update is called once per frame
@@ -20,32 +21,23 @@ public class GateController : MonoBehaviour
         
     }
 
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    transform.Rotate(Vector3.right);
-    //    Debug.Log("shud rotate");
-    //}
-
-    private void OnTriggerStay(Collider other)
-    {
-        transform.Rotate(Vector3.back);
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        turnTheWheel = true;
+        gateActive = true;
+       
         StartCoroutine(WaitForIt());
     }
 
     private void OnTriggerExit(Collider other)
     {
-        turnTheWheel = false;
+        gateActive = false;
+       
     }
 
     IEnumerator WaitForIt()
     {
-        yield return new WaitForSeconds(3);
-        if (turnTheWheel)
+        yield return new WaitForSeconds(1);
+        if (gateActive)
         {
             SceneManager.LoadScene(1);
         }
