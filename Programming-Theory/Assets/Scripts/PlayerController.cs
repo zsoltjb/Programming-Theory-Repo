@@ -17,12 +17,16 @@ public class PlayerController : MonoBehaviour
     private float rotX = 0.0f; // rotation around the right/x axis
     float mouseX;
     float mouseY;
+
+    private Rigidbody playerRb;
     // Start is called before the first frame update
     void Start()
     {
         Vector3 rot = transform.localRotation.eulerAngles;
         rotY = rot.y;
         rotX = rot.x;
+
+        playerRb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -41,11 +45,11 @@ public class PlayerController : MonoBehaviour
 
         if (horizontalInput != 0)
         {
-            transform.Translate(Vector3.right * horizontalInput * speed * Time.deltaTime);
+            playerRb.AddRelativeForce(Vector3.right * horizontalInput * speed * Time.deltaTime, ForceMode.Impulse);
         }
         if (verticalInput != 0)
         {
-            transform.Translate(Vector3.forward * verticalInput * speed * Time.deltaTime);
+            playerRb.AddRelativeForce(Vector3.forward * verticalInput * speed * Time.deltaTime, ForceMode.Impulse);
         }
 
         rotY += mouseX * mouseSensitivity * Time.deltaTime;
