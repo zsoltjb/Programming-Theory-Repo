@@ -23,9 +23,12 @@ public class GateController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        gateActive = true;
-       
-        StartCoroutine(WaitForIt());
+        if (other.gameObject.CompareTag("Player"))
+        {
+            gateActive = true;
+            SceneManager.LoadScene(1);
+        }
+
     }
 
     private void OnTriggerExit(Collider other)
@@ -34,13 +37,4 @@ public class GateController : MonoBehaviour
        
     }
 
-    IEnumerator WaitForIt()
-    {
-        yield return new WaitForSeconds(1);
-        if (gateActive)
-        {
-            SceneManager.LoadScene(1);
-        }
-        
-    }
 }
