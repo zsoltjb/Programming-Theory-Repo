@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+[RequireComponent(typeof(NavMeshAgent))]
+public abstract class Enemy : MonoBehaviour
 {
     public NavMeshAgent agent;
-    public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public float health;
-    Animator enemyAnim;
+    protected Animator enemyAnim;
+    protected Transform player;
 
     //Patroling
     public Vector3 walkPoint;
-    bool walkPointSet;
+    protected bool walkPointSet;
     public float walkPointRange;
 
     //Attacking
     public float timeBetweenAttacks;
-    bool alreadyAttacked;
-    public GameObject projectile;
-    public Vector3 offset;
+    protected bool alreadyAttacked;
+    public GameObject projectile, fireOffset;
 
     //States
     public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    public bool playerInSightRange, playerInAttackRange, dying;
 
     private void Awake()
     {
-        //player = GameObject.Find("Player").transform;
+        player = GameObject.Find("PlayerArmature").GetComponent<Transform>();
         agent = GetComponent<NavMeshAgent>();
         enemyAnim = GetComponent<Animator>();
         enemyAnim.updateMode = AnimatorUpdateMode.UnscaledTime;
@@ -39,17 +39,16 @@ public class Enemy : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!playerInSightRange && !playerInAttackRange) Patroling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        if (!dying)
+        {
+            if (!playerInSightRange && !playerInAttackRange) Patroling();
+            if (playerInSightRange && !playerInAttackRange) ChasePlayer();
+            if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        }
     }
 
-    private void Patroling()
+    protected virtual void Patroling()
     {
-        enemyAnim.SetBool("patroling", true);
-        enemyAnim.SetBool("chasing", false);
-        enemyAnim.SetBool("attacking", false);
-
         if (!walkPointSet) SearchWalkPoint();
 
         if (walkPointSet) agent.SetDestination(walkPoint);
@@ -63,7 +62,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void SearchWalkPoint()
+    protected void SearchWalkPoint()
     {
         //Calculate random point in range
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
@@ -76,21 +75,13 @@ public class Enemy : MonoBehaviour
             walkPointSet = true;
         }
     }
-    private void ChasePlayer()
+    protected virtual void ChasePlayer()
     {
-        enemyAnim.SetBool("patroling", false);
-        enemyAnim.SetBool("chasing", true);
-        enemyAnim.SetBool("attacking", false);
-
         agent.SetDestination(player.position);
     }
 
-    private void AttackPlayer()
+    protected virtual void AttackPlayer()
     {
-        enemyAnim.SetBool("patroling", false);
-        enemyAnim.SetBool("chasing", false);
-        enemyAnim.SetBool("attacking", true);
-
         //Make sure enemy doesn't move
         agent.SetDestination(transform.position);
 
@@ -99,7 +90,7 @@ public class Enemy : MonoBehaviour
         if (!alreadyAttacked)
         {
             //Attack code here
-            Rigidbody rb = Instantiate(projectile, transform.position + offset, Quaternion.identity).GetComponent<Rigidbody>();
+            Rigidbody rb = Instantiate(projectile, fireOffset.transform.position, fireOffset.transform.rotation).GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 5f, ForceMode.Impulse);
 
@@ -109,12 +100,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void ResetAttack()
+    protected void ResetAttack()
     {
         alreadyAttacked = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Fire"))
         {
@@ -127,17 +118,25 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
-            Invoke(nameof(DestroyEnemy), 2f);
+            dying = true;
+            Die();
         }
+
     }
 
-    private void DestroyEnemy()
+    protected virtual void Die()
+    {
+        agent.SetDestination(transform.position);
+        Invoke(nameof(DestroyEnemy), 2f);
+    }
+
+    protected void DestroyEnemy()
     {
         Destroy(gameObject);
     }
 
     //Visualize the attack and sight range
-    private void OnDrawGizmosSelected()
+    protected void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
