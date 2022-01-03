@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
     public Button resumeButton;
 
     public GameObject pauseMenu;
-    public bool isGamePaused;
+    //ENCAPSULATION
+    public bool IsGamePaused { get; set; }
     private GameObject sceneEventSystem;
     private void Awake()
     {
@@ -62,13 +63,13 @@ public class GameManager : MonoBehaviour
     {
         sceneEventSystem = GameObject.Find("EventSystem");
 
-        if (!isGamePaused)
+        if (!IsGamePaused)
         {
             Time.timeScale = 0;
             pauseMenu.gameObject.SetActive(true);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Confined;
-            isGamePaused = true;
+            IsGamePaused = true;
             if (sceneEventSystem != null)
             {
                 sceneEventSystem.gameObject.SetActive(false);
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
             pauseMenu.gameObject.SetActive(false);
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            isGamePaused = false;
+            IsGamePaused = false;
             if (sceneEventSystem != null)
             {
                 sceneEventSystem.gameObject.SetActive(true);

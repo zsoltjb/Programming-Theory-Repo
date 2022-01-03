@@ -326,7 +326,7 @@ namespace StarterAssets
 		{
 			//Vector3 target = new Vector3(_cinemachineTargetPitch + fireOffset.transform.rotation.x, _cinemachineTargetYaw + fireOffset.transform.rotation.y, fireOffset.transform.position.z);
 
-			if (_input.fire & !GameManager.Instance.isGamePaused)
+			if (_input.fire & !GameManager.Instance.IsGamePaused)
 			{
 				Rigidbody rb = Instantiate(projectile, fireOffset.transform.position, fireOffset.transform.rotation).GetComponent<Rigidbody>();
 				rb.AddForce(transform.forward * 32f, ForceMode.Impulse);

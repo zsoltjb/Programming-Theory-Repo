@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//INHERITANCE
 public class TurtleEnemy : Enemy
 {
-
+    //POLYMORPHISM
     protected override void AttackPlayer()
     {
         //Make sure enemy doesn't move
@@ -20,6 +20,8 @@ public class TurtleEnemy : Enemy
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
+
+    //POLYMORHPISM
     protected override void Die()
     {
             //AnimationMovement("die");
