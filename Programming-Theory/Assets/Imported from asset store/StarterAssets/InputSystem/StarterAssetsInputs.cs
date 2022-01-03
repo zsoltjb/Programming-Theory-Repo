@@ -13,6 +13,7 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 		public bool fire;
+		public bool pause;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -51,6 +52,11 @@ namespace StarterAssets
         {
 			FireInput(value.isPressed);
         }
+
+		public void OnPause(InputValue value)
+        {
+			PauseInput(value.isPressed);
+        }
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -79,6 +85,13 @@ namespace StarterAssets
 		public void FireInput(bool newFireState)
         {
 			fire = newFireState;
+        }
+
+		public void PauseInput(bool newPauseState)
+        {
+			Debug.Log("pause pressed");
+			pause = newPauseState;
+			GameManager.Instance.PauseGame();
         }
 
 #if !UNITY_IOS || !UNITY_ANDROID

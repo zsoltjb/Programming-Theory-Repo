@@ -63,7 +63,9 @@ namespace StarterAssets
 		public bool LockCameraPosition = false;
 
 		// cinemachine
+		[SerializeField]
 		private float _cinemachineTargetYaw;
+		[SerializeField]
 		private float _cinemachineTargetPitch;
 
 		// player
@@ -315,22 +317,23 @@ namespace StarterAssets
 
 			if (Grounded) Gizmos.color = transparentGreen;
 			else Gizmos.color = transparentRed;
-			
+
 			// when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
 			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
 		}
 
 		private void AttackEnemy()
 		{
-			if (_input.fire)
-			{				
+			//Vector3 target = new Vector3(_cinemachineTargetPitch + fireOffset.transform.rotation.x, _cinemachineTargetYaw + fireOffset.transform.rotation.y, fireOffset.transform.position.z);
+
+			if (_input.fire & !GameManager.Instance.isGamePaused)
+			{
 				Rigidbody rb = Instantiate(projectile, fireOffset.transform.position, fireOffset.transform.rotation).GetComponent<Rigidbody>();
 				rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
 				//rb.AddForce(transform.up * 5f, ForceMode.Impulse);
 				_input.fire = false;
 			}
 
-		} 
-	}				
-
+		}
+	}
 }
